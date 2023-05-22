@@ -110,7 +110,7 @@ func lookupTarget(goos string, goarch string) ([]string, error) {
 	// TODO: go through and map all the other GOOS/GOARCH pairs to zig targets
 	// For now just support linux/amd64 as a nice proof-of-concept
 	if goos == "linux" && goarch == "amd64" {
-		return []string{"-target", "x86_64-linux"}, nil
+		return []string{"-target", "x86_64-linux-musl"}, nil
 	}
 
 	panic("unsupported GOOS/GOARCH pair")
