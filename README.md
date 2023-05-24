@@ -8,16 +8,39 @@ Cross-compiler for CGO-based Golang projects using zig cc
 
 It mainly eases this by inspecting `GOOS` and `GOARCH` and setting the appropriate `zig cc` targets.
 
-So, instead of:
+So instead of running:
 
 ```bash
 CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" go build main.go
 ```
 
-One can forgo the `-target` arguments and simply run:
+One can use `xcgo-zig` as a wrapper for `go` and simply run:
 
 ```bash
-CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC="xcgo-zig cc" CXX="xcgo-zig c++" go build main.go
+GOOS=linux GOARCH=amd64 xcgo-zig build main.go
+```
+
+Behind the scenes, `xcgo-zig` will build and inject the correct `CC` and `CXX` environment variables:
+
+```
+$ GOOS=linux GOARCH=amd64 xcgo-zig build main.go
+xcgo-zig: Running `go build main.go` with:
+xcgo-zig: GOOS=linux
+xcgo-zig: GOARCH=amd64
+xcgo-zig: CC=/opt/homebrew/bin/zig cc -target x86_64-linux-musl
+xcgo-zig: CXX=/opt/homebrew/bin/zig c++ -target x86_64-linux-musl
+```
+
+By default, `xcgo-zig` will find and use the first `go` available in your `$PATH`.  However, this behavior can be changed with `GO=` environment variable:
+
+```
+$ GO=gotip xcgo-zig version
+xcgo-zig: Running `gotip version` with:
+xcgo-zig: GOOS=
+xcgo-zig: GOARCH=
+xcgo-zig: CC=/opt/homebrew/bin/zig cc
+xcgo-zig: CXX=/opt/homebrew/bin/zig c++
+go version devel go1.21-26f2569 Tue May 23 21:46:00 2023 +0000 darwin/arm64
 ```
 
 ## Requirements
